@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.aspectRatio
@@ -34,6 +35,8 @@ fun DetailScreen(
     entry: SmallWorldEntry,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    isInHand: Boolean,
+    onToggleHand: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -56,19 +59,29 @@ fun DetailScreen(
                     contentDescription = "Назад"
                 )
             }
-            IconButton(
-                onClick = onToggleFavorite,
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Icon(
-                    painter = painterResource(
-                        if (isFavorite) R.drawable.ic_favorite
-                        else R.drawable.ic_favorite_border
-                    ),
-                    contentDescription = if (isFavorite) "Убрать из избранного" else "Добавить в избранное",
-                    tint = if (isFavorite) MaterialTheme.colorScheme.primary
-                    else LocalContentColor.current
-                )
+            Row(modifier = Modifier.align(Alignment.TopEnd)) {
+                IconButton(onClick = onToggleFavorite) {
+                    Icon(
+                        painter = painterResource(
+                            if (isFavorite) R.drawable.ic_favorite
+                            else R.drawable.ic_favorite_border
+                        ),
+                        contentDescription = if (isFavorite) "Убрать из избранного" else "Добавить в избранное",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary
+                        else LocalContentColor.current
+                    )
+                }
+                IconButton(onClick = onToggleHand) {
+                    Icon(
+                        painter = painterResource(
+                            if (isInHand) R.drawable.ic_hand
+                            else R.drawable.ic_hand_border
+                        ),
+                        contentDescription = if (isInHand) "Убрать из руки" else "Добавить в руку",
+                        tint = if (isInHand) MaterialTheme.colorScheme.primary
+                        else LocalContentColor.current
+                    )
+                }
             }
         }
 
