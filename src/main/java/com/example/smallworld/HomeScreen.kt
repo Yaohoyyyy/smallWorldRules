@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,8 @@ fun HomeScreen(
     entries: List<SmallWorldEntry>,
     isFavorite: (SmallWorldEntry) -> Boolean,
     onToggleFavorite: (SmallWorldEntry) -> Unit,
+    isInHand: (SmallWorldEntry) -> Boolean,
+    onToggleHand: (SmallWorldEntry) -> Unit,
     onEntryClick: (SmallWorldEntry) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -101,19 +104,32 @@ fun HomeScreen(
                         )
                     },
                     trailingContent = {
-                        val favorite = isFavorite(entry)
-                        IconButton(onClick = { onToggleFavorite(entry) }) {
-                            Icon(
-                                painter = painterResource(
-                                    if (favorite) R.drawable.ic_favorite
-                                    else R.drawable.ic_favorite_border
-                                ),
-                                contentDescription = if (favorite) "Убрать из избранного" else "Добавить в избранное",
-                                tint = if (favorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            val favorite = isFavorite(entry)
+                            IconButton(onClick = { onToggleFavorite(entry) }) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (favorite) R.drawable.ic_favorite
+                                        else R.drawable.ic_favorite_border
+                                    ),
+                                    contentDescription = if (favorite) "Убрать из избранного" else "Добавить в избранное",
+                                    tint = if (favorite) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                                )
+                            }
+                            val inHand = isInHand(entry)
+                            IconButton(onClick = { onToggleHand(entry) }) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (inHand) R.drawable.ic_hand
+                                        else R.drawable.ic_hand_border
+                                    ),
+                                    contentDescription = if (inHand) "Убрать из руки" else "Добавить в руку",
+                                    tint = if (inHand) MaterialTheme.colorScheme.primary else LocalContentColor.current
+                                )
+                            }
                         }
                     },
-                    colors = androidx.compose.material3.ListItemDefaults.colors(),
+                    colors = ListItemDefaults.colors(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onEntryClick(entry) }
@@ -124,10 +140,6 @@ fun HomeScreen(
     }
 }
 
-/**
- * Приводит строку к нижнему регистру и считает "е" и "ё" эквивалентными,
- * чтобы поиск по одной букве находил и другую.
- */
 private fun String.normalized(): String =
     lowercase()
         .replace('ё', 'е')

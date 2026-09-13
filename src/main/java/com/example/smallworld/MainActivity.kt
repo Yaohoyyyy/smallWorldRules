@@ -44,13 +44,16 @@ fun SmallWorldApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     var selectedEntry by remember { mutableStateOf<SmallWorldEntry?>(null) }
     var favoriteKeys by rememberFavoriteKeys()
+    var handKeys by rememberHandKeys()
 
     val context = LocalContext.current
     persistFavoriteKeys(favoriteKeys)
+    persistHandKeys(handKeys)
 
     val entries = rememberEntries()
 
     val favoriteEntries = entries.filter { it.name in favoriteKeys }
+    val handEntries = entries.filter { it.name in handKeys }
 
     val isFavorite: (SmallWorldEntry) -> Boolean = { it.name in favoriteKeys }
     val onToggleFavorite: (SmallWorldEntry) -> Unit = {
@@ -58,6 +61,15 @@ fun SmallWorldApp() {
             favoriteKeys - it.name
         } else {
             favoriteKeys + it.name
+        }
+    }
+
+    val isInHand: (SmallWorldEntry) -> Boolean = { it.name in handKeys }
+    val onToggleHand: (SmallWorldEntry) -> Unit = {
+        handKeys = if (it.name in handKeys) {
+            handKeys - it.name
+        } else {
+            handKeys + it.name
         }
     }
 
@@ -88,6 +100,8 @@ fun SmallWorldApp() {
                     entry = selected,
                     isFavorite = isFavorite(selected),
                     onToggleFavorite = { onToggleFavorite(selected) },
+                    isInHand = isInHand(selected),
+                    onToggleHand = { onToggleHand(selected) },
                     onBack = { selectedEntry = null },
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -97,6 +111,8 @@ fun SmallWorldApp() {
                         entries = entries,
                         isFavorite = isFavorite,
                         onToggleFavorite = onToggleFavorite,
+                        isInHand = isInHand,
+                        onToggleHand = onToggleHand,
                         onEntryClick = { selectedEntry = it },
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -104,6 +120,13 @@ fun SmallWorldApp() {
                         entries = favoriteEntries,
                         isFavorite = isFavorite,
                         onToggleFavorite = onToggleFavorite,
+                        onEntryClick = { selectedEntry = it },
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                    AppDestinations.HAND -> HandScreen(
+                        entries = handEntries,
+                        isInHand = isInHand,
+                        onToggleHand = onToggleHand,
                         onEntryClick = { selectedEntry = it },
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -115,6 +138,7 @@ fun SmallWorldApp() {
 
 private const val PREFS_NAME = "small_world_prefs"
 private const val KEY_FAVORITES = "favorite_keys"
+private const val KEY_HAND = "hand_keys"
 
 @Composable
 fun rememberFavoriteKeys(): androidx.compose.runtime.MutableState<Set<String>> {
@@ -137,6 +161,26 @@ fun persistFavoriteKeys(keys: Set<String>) {
 }
 
 @Composable
+fun rememberHandKeys(): androidx.compose.runtime.MutableState<Set<String>> {
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    return remember {
+        mutableStateOf(prefs.getStringSet(KEY_HAND, emptySet())?.toSet() ?: emptySet())
+    }
+}
+
+@Composable
+fun persistHandKeys(keys: Set<String>) {
+    val context = LocalContext.current
+    androidx.compose.runtime.LaunchedEffect(keys) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putStringSet(KEY_HAND, keys)
+            .apply()
+    }
+}
+
+@Composable
 fun rememberEntries(): List<SmallWorldEntry> {
     val context = LocalContext.current
     return androidx.compose.runtime.remember {
@@ -150,4 +194,5 @@ enum class AppDestinations(
 ) {
     HOME("Главная", R.drawable.ic_home),
     FAVORITES("Избранное", R.drawable.ic_favorite),
+    HAND("Рука", R.drawable.ic_hand),
 }
