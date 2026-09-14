@@ -120,6 +120,8 @@ fun SmallWorldApp() {
                         entries = favoriteEntries,
                         isFavorite = isFavorite,
                         onToggleFavorite = onToggleFavorite,
+                        isInHand = isInHand,
+                        onToggleHand = onToggleHand,
                         onEntryClick = { selectedEntry = it },
                         modifier = Modifier.padding(innerPadding)
                     )

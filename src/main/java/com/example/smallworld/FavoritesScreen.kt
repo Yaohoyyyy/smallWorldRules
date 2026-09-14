@@ -3,6 +3,7 @@ package com.example.smallworld
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,8 @@ fun FavoritesScreen(
     entries: List<SmallWorldEntry>,
     isFavorite: (SmallWorldEntry) -> Boolean,
     onToggleFavorite: (SmallWorldEntry) -> Unit,
+    isInHand: (SmallWorldEntry) -> Boolean,
+    onToggleHand: (SmallWorldEntry) -> Unit,
     onEntryClick: (SmallWorldEntry) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,16 +66,30 @@ fun FavoritesScreen(
                             )
                         },
                         trailingContent = {
-                            IconButton(onClick = { onToggleFavorite(entry) }) {
-                                Icon(
-                                    painter = painterResource(
-                                        if (favorite) R.drawable.ic_favorite
-                                        else R.drawable.ic_favorite_border
-                                    ),
-                                    contentDescription = if (favorite) "Убрать из избранного" else "Добавить в избранное",
-                                    tint = if (favorite) MaterialTheme.colorScheme.primary
-                                    else LocalContentColor.current
-                                )
+                            Row {
+                                IconButton(onClick = { onToggleFavorite(entry) }) {
+                                    Icon(
+                                        painter = painterResource(
+                                            if (favorite) R.drawable.ic_favorite
+                                            else R.drawable.ic_favorite_border
+                                        ),
+                                        contentDescription = if (favorite) "Убрать из избранного" else "Добавить в избранное",
+                                        tint = if (favorite) MaterialTheme.colorScheme.primary
+                                        else LocalContentColor.current
+                                    )
+                                }
+                                val inHand = isInHand(entry)
+                                IconButton(onClick = { onToggleHand(entry) }) {
+                                    Icon(
+                                        painter = painterResource(
+                                            if (inHand) R.drawable.ic_hand
+                                            else R.drawable.ic_hand_border
+                                        ),
+                                        contentDescription = if (inHand) "Убрать из руки" else "Добавить в руку",
+                                        tint = if (inHand) MaterialTheme.colorScheme.primary
+                                        else LocalContentColor.current
+                                    )
+                                }
                             }
                         },
                         colors = ListItemDefaults.colors(),

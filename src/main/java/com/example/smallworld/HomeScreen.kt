@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -66,6 +67,16 @@ fun HomeScreen(
                     contentDescription = "Поиск"
                 )
             },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { query = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Очистить поиск"
+                        )
+                    }
+                }
+            },
             singleLine = true
         )
 
@@ -89,6 +100,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 32.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
                     )
                 }
